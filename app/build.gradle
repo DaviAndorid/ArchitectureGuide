@@ -1,0 +1,73 @@
+plugins {
+    id 'com.android.application'
+    id 'kotlin-android'
+}
+
+android {
+    compileSdkVersion build_versions.compile_sdk
+    buildToolsVersion build_versions.build_tools
+
+    defaultConfig {
+        applicationId "com.davi.architectureguide"
+        minSdkVersion build_versions.min_sdk
+        targetSdkVersion build_versions.target_sdk
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        /***
+         * （1）Room 可以在编译时将数据库的架构信息导出为 JSON 文件
+         * （2）地址：https://developer.android.google.cn/training/data-storage/room/migrating-db-versions?hl=zh-cn
+         * （3）导出的 JSON 文件代表数据库的架构历史记录。您应将这些文件存储在版本控制系统中，
+         * 因为此系统允许 Room 出于测试目的创建较旧版本的数据库。
+         * */
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments = ["room.schemaLocation":
+                                     "$projectDir/schemas".toString()]
+            }
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    lintOptions {
+        abortOnError false
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+
+    dataBinding {
+        enabled = true
+    }
+
+}
+
+dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    implementation deps.cardview
+    implementation deps.core_ktx
+    implementation deps.app_compat
+    implementation deps.fragment.runtime
+    implementation deps.recyclerview
+
+
+    // Architecture components
+    implementation deps.lifecycle.runtime
+    annotationProcessor deps.lifecycle.compiler
+    implementation deps.room.runtime
+    annotationProcessor deps.room.compiler
+}
